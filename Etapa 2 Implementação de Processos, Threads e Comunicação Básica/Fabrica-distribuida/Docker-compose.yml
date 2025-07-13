@@ -12,7 +12,7 @@ services:
   robo-soldagem:
     build: ./robo
     container_name: robo-soldagem
-    command: java -cp target/classes main.java.robo.RoboDistribuido SOLDAGEM controlador 8080
+    command: java -cp target/classes org.example.RoboDistribuido SOLDAGEM controlador 8080
     depends_on:
       - controlador
     networks:
@@ -21,7 +21,7 @@ services:
   robo-pintura:
     build: ./robo
     container_name: robo-pintura
-    command: java -cp target/classes main.java.robo.RoboDistribuido PINTURA controlador 8080
+    command: java -cp target/classes org.example.RoboDistribuido PINTURA controlador 8080
     depends_on:
       - controlador
     networks:
@@ -30,7 +30,7 @@ services:
   robo-montagem:
     build: ./robo
     container_name: robo-montagem
-    command: java -cp target/classes main.java.robo.RoboDistribuido MONTAGEM controlador 8080
+    command: java -cp target/classes org.example.RoboDistribuido MONTAGEM controlador 8080
     depends_on:
       - controlador
     networks:
