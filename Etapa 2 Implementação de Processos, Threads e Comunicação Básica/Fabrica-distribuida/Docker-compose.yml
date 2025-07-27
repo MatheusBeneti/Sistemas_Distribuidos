@@ -5,7 +5,7 @@ services:
     build: ./controlador
     container_name: controlador-central
     ports:
-      - "8080:8080"
+      - "8083:8080"
     networks:
       - fabrica-net
 
