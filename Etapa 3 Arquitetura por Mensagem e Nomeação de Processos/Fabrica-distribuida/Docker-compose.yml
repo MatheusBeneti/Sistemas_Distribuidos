@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  controlador:
+    build: ./controlador
+    container_name: controlador-central
+    command: java -cp target/classes:target/dependency/* org.example.ControladorCentralKafka
+    ports:
+      - "8083:8080"
+    depends_on:
+      - kafka
+    networks:
+      - fabrica-net
+
+  robo-soldagem:
+    build: ./robo
+    container_name: robo-soldagem
+    command: java -cp target/classes:target/dependency/* org.example.RoboKafka SOLDAGEM
+    depends_on:
+      - controlador
+      - kafka
+    networks:
+      - fabrica-net
+
+  robo-pintura:
+    build: ./robo
+    container_name: robo-pintura
+    command: java -cp target/classes:target/dependency/* org.example.RoboKafka PINTURA
+    depends_on:
+      - controlador
+      - kafka
+    networks:
+      - fabrica-net
+
+  robo-montagem:
+    build: ./robo
+    container_name: robo-montagem
+    command: java -cp target/classes:target/dependency/* org.example.RoboKafka MONTAGEM
+    depends_on:
+      - controlador
+      - kafka
+    networks:
+      - fabrica-net
+
+  estoque:
+    build: ./estoque
+    container_name: gerenciador-estoque
+    ports:
+      - "8081:8081"
+    networks:
+      - fabrica-net
+
+  monitor:
+    build: ./monitor
+    container_name: monitor-sistema
+    ports:
+      - "8082:8082"
+    networks:
+      - fabrica-net
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - fabrica-net
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_CREATE_TOPICS: "ordens-producao:1:1,status-robos:1:1,comandos-robos:1:1"
+    networks:
+      - fabrica-net
+
+networks:
+  fabrica-net:
+    driver: bridge
