@@ -1,9 +1,16 @@
-FROM openjdk:21
+FROM openjdk:21-jdk-slim
+
+# Instalar Maven
+RUN apt-get update && apt-get install -y maven
+
 WORKDIR /app
 
+# Copiar arquivos do projeto
 COPY ./src /app/src
+COPY ./pom.xml /app/pom.xml
 
-RUN mkdir -p /app/target/classes && \
-    javac -d /app/target/classes /app/src/main/java/org/example/*.java
+# Compilar o projeto com Maven
+RUN mvn clean compile dependency:copy-dependencies
 
-CMD ["java", "-cp", "target/classes", "org.example.MonitorSistema"]
+# Executar o monitor
+CMD ["java", "-cp", "target/classes:target/dependency/*", "org.example.MonitorAvancado"]
